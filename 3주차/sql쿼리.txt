@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS `products` (
   `name` varchar(50) NOT NULL,
   `price` int unsigned NOT NULL,
   PRIMARY KEY (`product_id`)
-) DEFAULT CHARSET=utf8;
+); -- DEFAULT CHARSET=utf8;
 
 INSERT INTO `products` (`product_id`, `category`, `name`, `price`) VALUES
   (0, '키즈', '어린이칫솔', 1500),
@@ -241,16 +241,16 @@ INSERT INTO `orders_v3` (`odr_index`, `product_id`, `user_name`, `date`) VALUES
 
 
 
-DDL/DML (sqlfiddle 외에 다른 실습 사이트)
-CREATE TABLE IF NOT EXISTS 'products' (
-  'product_id' int(6) NOT NULL,
-  'category' varchar(40) NOT NULL,
-  'name' varchar(10) NOT NULL,
-  'price' int unsigned NOT NULL,
-  PRIMARY KEY ('product_id')
+-- DDL/DML (sqlfiddle 외에 다른 실습 사이트)
+CREATE TABLE IF NOT EXISTS `products` (
+  `product_id` int(6) NOT NULL,
+  `category` varchar(40) NOT NULL,
+  `name` varchar(10) NOT NULL,
+  `price` int unsigned NOT NULL,
+  PRIMARY KEY (`product_id`)
 );
 
-INSERT INTO 'products' ('product_id', 'category', 'name', 'price') VALUES
+INSERT INTO `products` (`product_id`, `category`, `name`, `price`) VALUES
   (0, '키즈', '어린이칫솔', 1500),
   (1, '스포츠', '손목보호대', 10000),
   (2, '주방용품', '밥그릇', 2000),
@@ -259,25 +259,25 @@ INSERT INTO 'products' ('product_id', 'category', 'name', 'price') VALUES
 
 -- JSON ARRAY
 
-CREATE TABLE IF NOT EXISTS 'products' (
-  'product_id' int(6) NOT NULL,
-  'category' varchar(40) NOT NULL,
-  'name' varchar(10) NOT NULL,
-  'price' int unsigned NOT NULL,
-  'options' JSON NULL,
-  PRIMARY KEY ('product_id')
+CREATE TABLE IF NOT EXISTS `products` (
+  `product_id` int(6) NOT NULL,
+  `category` varchar(40) NOT NULL,
+  `name` varchar(10) NOT NULL,
+  `price` int unsigned NOT NULL,
+  `options` JSON NULL,
+  PRIMARY KEY (`product_id`)
 );
 
-INSERT INTO 'products' ('product_id', 'category', 'name', 'price',
-                       'options') VALUES
+INSERT INTO `products` (`product_id`, `category`, `name`, `price`,
+                       `options`) VALUES
   (0, '키즈', '어린이칫솔', 1500, JSON_ARRAY('빨강','파랑')),
   (1, '스포츠', '손목보호대', 10000, JSON_ARRAY('S', 'M','L')),
   (2, '주방용품', '밥그릇', 2000, JSON_ARRAY('소', '중','대')),
   (3, '디지털', '마우스', 15000, NULL) ;
 
 -- 쌍따옴표, 홑따옴표 구분
-INSERT INTO 'products' ('product_id', 'category', 'name', 'price',
-                       'options') VALUES
+INSERT INTO `products` (`product_id`, `category`, `name`, `price`,
+                       `options`) VALUES
   (0, '키즈', '어린이칫솔', 1500, '["빨강","파랑"]'),
   (1, '스포츠', '손목보호대', 10000, '["S","M", "L"]'),
   (2, '주방용품', '밥그릇', 2000, '["소", "중","대"]'),
@@ -285,8 +285,8 @@ INSERT INTO 'products' ('product_id', 'category', 'name', 'price',
 
 
 -- Nested Array
-INSERT INTO 'products' ('product_id', 'category', 'name', 'price',
-                       'options') VALUES
+INSERT INTO `products` (`product_id`, `category`, `name`, `price`,
+                       `options`) VALUES
   (0, '키즈', '어린이칫솔', 1500, '["빨강","파랑"]'),
   (1, '스포츠', '손목보호대', 10000, '["S","M", "L"]'),
   (2, '주방용품', '밥그릇', 2000, '["소", "중","대"]'),
@@ -294,17 +294,17 @@ INSERT INTO 'products' ('product_id', 'category', 'name', 'price',
 
 
 
-CREATE TABLE IF NOT EXISTS 'managers_v2' (
-  'id' int unsigned NOT NULL,
-  'name' varchar(40) NOT NULL,
-  'managing' varchar(50) NOT NULL,
-  'off' varchar(50) NOT NULL,
-  'substitute' int unsigned NOT NULL,
-  PRIMARY KEY ('id')
+CREATE TABLE IF NOT EXISTS `managers_v2` (
+  `id` int unsigned NOT NULL,
+  `name` varchar(40) NOT NULL,
+  `managing` varchar(50) NOT NULL,
+  `off` varchar(50) NOT NULL,
+  `substitute` int unsigned NOT NULL,
+  PRIMARY KEY (`id`)
 );
 
 
-INSERT INTO 'managers_v2' ('id', 'name', 'managing',  'off', 'substitute') VALUES
+INSERT INTO `managers_v2` (`id`, `name`, `managing`,  `off`, `substitute`) VALUES
   (0, '영희', '스포츠', '토,일', 1),
   (1, '철수', '주방용품', '일,월', 2),
   (2, '민수', '디지털', '화,토', 3),
@@ -330,36 +330,36 @@ INSERT INTO `managers_v2` (`id`, `name`, `managing`, `off`, `substitute`) VALUES
 
 -- JSON Key-value
 
-CREATE TABLE IF NOT EXISTS 'managers_v2' (
-  'id' int unsigned NOT NULL,
-  'name' varchar(40) NOT NULL,
-  'managing' varchar(50) NOT NULL,
-  'info' JSON NULL,
-  PRIMARY KEY ('id')
+CREATE TABLE IF NOT EXISTS `managers_v2` (
+  `id` int unsigned NOT NULL,
+  `name` varchar(40) NOT NULL,
+  `managing` varchar(50) NOT NULL,
+  `info` JSON NULL,
+  PRIMARY KEY (`id`)
 );
 
 
-INSERT INTO 'managers_v2' ('id', 'name', 'managing', 'info') VALUES
+INSERT INTO `managers_v2` (`id`, `name`, `managing`, `info`) VALUES
   (0, '영희', '스포츠', JSON_OBJECT('off', JSON_ARRAY('일', '월'), 'substitute', '민수')),
   (1, '철수', '주방용품', JSON_OBJECT('off', JSON_ARRAY('화', '수'), 'substitute', '길순')),
   (2, '민수', '디지털', JSON_OBJECT('off', JSON_ARRAY('목', '금'), 'substitute', '철수')),
   (3, '길순', '키즈', JSON_OBJECT('off', JSON_ARRAY('금', '토'), 'substitute', '영희'));
-ㄴ
+
 
 
 -- nested
 
 
-CREATE TABLE IF NOT EXISTS 'managers_v2' (
-  'id' int unsigned NOT NULL,
-  'name' varchar(40) NOT NULL,
-  'managing' varchar(50) NOT NULL,
-  'info' JSON NULL,
-  PRIMARY KEY ('id')
+CREATE TABLE IF NOT EXISTS `managers_v2` (
+  `id` int unsigned NOT NULL,
+  `name` varchar(40) NOT NULL,
+  `managing` varchar(50) NOT NULL,
+  `info` JSON NULL,
+  PRIMARY KEY (`id`)
 );
 
 
-INSERT INTO 'managers_v2' ('id', 'name', 'managing', 'info') VALUES
+INSERT INTO `managers_v2` (`id`, `name`, `managing`, `info`) VALUES
   (0, '영희', '스포츠', JSON_OBJECT('off', JSON_ARRAY('일', '월'), 'substitute', '민수', 'education_time', JSON_OBJECT('데이터', 3, '소방', 2) )),
   (1, '철수', '주방용품', JSON_OBJECT('off', JSON_ARRAY('화', '수'), 'substitute', '길순', 'education_time', JSON_OBJECT('인사', 2, '데이터', 3) )),
   (2, '민수', '디지털', JSON_OBJECT('off', JSON_ARRAY('목', '금'), 'substitute', '철수', 'education_time', JSON_OBJECT('보안', 3, '회계', 1 ))),
@@ -377,33 +377,33 @@ INSERT INTO 'managers_v2' ('id', 'name', 'managing', 'info') VALUES
 
 
 
-DDL/DML (기타)
+-- DDL/DML (기타)
 
-CREATE TABLE IF NOT EXISTS 'products_B' (
-  'product_id' int unsigned NOT NULL,
-  'category' varchar(40) NOT NULL,
-  'name' varchar(50) NOT NULL,
-  'price' int unsigned NOT NULL,
-  PRIMARY KEY ('product_id')
+CREATE TABLE IF NOT EXISTS `products_B` (
+  `product_id` int unsigned NOT NULL,
+  `category` varchar(40) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `price` int unsigned NOT NULL,
+  PRIMARY KEY (`product_id`)
 );
 
-INSERT INTO 'products_B' ('product_id', 'category', 'name', 'price') VALUES
+INSERT INTO `products_B` (`product_id`, `category`, `name`, `price`) VALUES
   (0, '키즈', '어린이칫솔', 1500),
   (1, '스포츠', '손목보호대', 10000),
   (2, '주방용품', '밥그릇', 2000),
   (3, '디지털', '마우스', 15000);
 
 
-CREATE TABLE IF NOT EXISTS 'clicks' (
+CREATE TABLE IF NOT EXISTS `clicks` (
   `clk_index` int unsigned NOT NULL,
   `product_id` int unsigned NOT NULL,
   `user_name` varchar(20) NOT NULL,
   `date` char(8) NOT NULL,
-  PRIMARY KEY ('clk_index')
+  PRIMARY KEY (`clk_index`)
 );
 
 
-INSERT INTO 'clicks' ('clk_index', 'product_id', 'user_name', 'date') VALUES
+INSERT INTO `clicks` (`clk_index`, `product_id`, `user_name`, `date`) VALUES
   (0, 0, '영희', '20231014'),
   (1, 0, '철수', '20231014'),
   (2, 0, '영희', '20231014'),
@@ -426,22 +426,16 @@ INSERT INTO 'clicks' ('clk_index', 'product_id', 'user_name', 'date') VALUES
 
 -- 6강 DDL
 
-CREATE TABLE IF NOT EXISTS 'events' (
-  `event_index` int unsigned NOT NULL
+CREATE TABLE IF NOT EXISTS `events` (
+  `event_index` int unsigned NOT NULL,
   `product_id` int unsigned NOT NULL,
   `event_end` char(10) NOT NULL,
-  PRIMARY KEY ('event_index')
+  PRIMARY KEY (`event_index`)
 );
 
-INSERT INTO 'events' ('event_index', 'product_id', 'event_end') VALUES
+INSERT INTO `events` (`event_index`, `product_id`, `event_end`) VALUES
   (0, 0, '2023-11-01'),
   (1, 1, '2023-11-02'),
   (2, 2, '2023-10-31'),
   (3, 3, '2023-10-14');
-
-
-
-
-
-
 
