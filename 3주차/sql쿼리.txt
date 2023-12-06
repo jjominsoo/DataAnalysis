@@ -1,3 +1,8 @@
+http://sqlfiddle.com/
+
+https://www.programiz.com/sql/online-compiler/
+
+
 -- 1-2강
 CREATE TABLE IF NOT EXISTS `products` (
   `product_id` int unsigned NOT NULL,
