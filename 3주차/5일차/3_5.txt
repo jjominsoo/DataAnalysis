@@ -1,0 +1,514 @@
+캐글 데이터 긁어오고 
+mysql, python, excel을 통한 데이터 분석
+
+/*csv파일 읽기*/ 
+-- 일단 csv파일의 칼럼들을 가진 테이블을 미리 만들어 놓고 그 테이블 우클릭 > table data import wizard를 통해 테이블에 데이터를 삽입
+
+/*select count(1) as cnt, count(distinct restaurant_name) as cnt_distinct
+from indian_restaurants */
+
+/*중복테이블 찾기*/
+-- select restaurant_name, count(1) as cnt
+-- From indian_restaurants
+-- group by 1
+-- having cnt > 1
+
+/*중복의 원인 : location, fast_food_or_not*/
+-- select *
+-- from indian_restaurants
+-- where restaurant_name in ( '1 Bake Shop','1441 Pizzeria','7th Heaven', '99 Pancakes','A2B - Adyar Ananda Bhavan')
+-- order by restaurant_name, location
+
+/*위에서 발견한 원인들 말고도 다른 원인이 있다 같은 동네에서도 2개의 지점이 있을 수도 있다*/
+-- select count(1) as cnt, count(distinct restaurant_name, location, fast_food_or_not) as cnt_distinct
+-- from indian_restaurants
+
+/*모든 행이 unique하진 않다. >> 그나마 unique한 restuarant_name을 기준으로 분석을 진행하겠다. 그리고 나중에 필요하다면 나머지 field를 찾아보자*/
+
+/*평점을 기준으로 높은 순서대로 20개를 뽑아보자*/
+-- select restaurant_name, count(1) as cnt, avg(rating) as avg_rating, avg(average_price) as avg_price, avg(average_delivery_time) as avg_delivery_time
+-- from indian_restaurants
+-- group by 1
+-- order by 3 desc
+-- limit 20
+/*혹시 가게 수가 많으면 평점에 불리하지않는가?라는 문제를 해결하기 위해 가게 수 별로 평균 평점을 구한 결과
+>> 가게 수가 많을 수록 평점이 오히려 높아지는 것을 알 수 있다 ==  프렌차이즈의 장점*/
+-- with counts as( select restaurant_name, count(1) as cnt
+-- from indian_restaurants
+-- group by 1
+-- )
+-- select case cnt
+-- when 1 then 'cnt-1'
+-- when 2 then 'cnt-2'
+-- else 'cnt-ov3'
+-- end as cnt_group, avg(rating) as avg_rating
+-- from counts inner join indian_restaurants on counts.restaurant_name = indian_restaurants.restaurant_name
+-- group by 1
+
+/*csv파일을 생서하기 위해 into outfile 사용
+>> 파싱할 때 ','를 기준으로 파싱하는데 restaurant_name 에 ,(619행)가 있는 데이터는 이름부터 분리되서 csv파일을 다시 설정해야한다.
+>> 그래서 그냥 새로운 테이블 하나 만들고 table data export wizard를 통해 새로 파일을 만듬 !! 이때 field 구분자를 ,로 해줘야한다 안그러면 해당 구분자가 포함된 채로 한 셀에 모든 데이터 저장됨*/
+-- create table indian_restaurants2
+-- with counts as( select restaurant_name, count(1) as cnt
+-- from indian_restaurants
+-- group by 1
+-- )
+-- select counts.restaurant_name, cnt, rating
+-- from counts inner join indian_restaurants on counts.restaurant_name = indian_restaurants.restaurant_name
+-- -- into outfile 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/indian_restaurant2.csv'
+-- -- fields terminated by ','
+-- -- lines terminated by '\n';
+
+/*이후 파이참에서 코드 실행을 통해 검증을 함 = indian_restaurant2()
+가게 수가 적을 수록 분포가 넓게 있다 > 극단값이 많다 == 개인 가게일 수록 극단적 선택이다(맛이 있을 수 있고 없을 수 있고)
+이런 기본 상식과 일치하는지를 확인하고 만약 다르다면 1.데이터의 잘못 2.상식의 잘못 으로 생각할 수 있다*/
+
+/*수치형 변수 <> 별점 상관관계 구하기 == Pearson 상관계수(-1~1) >> 인사이트 획득*/
+-- create table indian_restaurants3
+-- select restaurant_name, count(1) as cnt, avg(rating) as avg_rating, avg(average_price) as avg_price, avg(average_delivery_time) as avg_delivery_time
+-- from indian_restaurants
+-- group by 1
+-- order by 3 desc
+
+-- select * from indian_restaurants3
+
+/*이후 엑셀에서 상관관계 확인함 CORREL함수 = indian_restaurants3.csv
+평점에 큰 영향을 미칠 것이라 생각하는 주요지표 3개(점포수 가격 배달시간)의 상관관계확인*/
+
+/*위에서 큰 상관관계를 찾지 못했기 때문에 더 많은 칼럼들을 비교분석하기 위해 새로운 csv파일을 생성*/
+-- create table indian_restaurants4
+-- with counts as( select restaurant_name, count(1) as cnt
+-- from indian_restaurants
+-- group by 1
+-- )
+-- select indian_restaurants.*, cnt
+-- from counts inner join indian_restaurants on counts.restaurant_name = indian_restaurants.restaurant_name
+
+/* 이후 파이참에서 코드 실행을 통해 확인함 = indian_restaurant4()
+점포수, 패스트푸드점, 길거리음식점, 베이커리일때 가격/배달시간과 평점의 상관관계 분석*/
+
+/*마찬가지로 이번엔 도시에 따른 상관관계를 위해서 새로운 csv 생성*/
+-- create table indian_restaurants6
+-- with cnts as (
+-- select location, count(1) as cnt
+-- from indian_restaurants
+-- group by 1
+-- ),
+-- res as (
+-- select location, percent_rank() over(order by cnt) as cnt_rank
+-- from cnts
+-- )
+-- select location
+-- from res
+-- where cnt_rank < 0.15
+
+/* 이후 파이참에서 코드 실행을 통해 확인함 = indian_restaurant5_6
+대도시(상위 5%) 소도시(하위 15%) 일때 가격/배달시간과 평점의 상관관계 분석*/
+
+/*지역을 기준으로 평균가격(avg_price) 순서대로 정렬*/
+-- select location, avg(rating) as avg_rating, avg(average_price) as avg_price, avg(average_delivery_time) as avg_delivery_time, MAX(average_price) as max_price, count(restaurant_name)
+-- from indian_restaurants
+-- group by 1
+-- order by 3 -- desc
+-- limit 10
+
+/*가게 특성(south/north/fast_food/street_food/biryani/bakery)마다의 평균가격
+높은가격 영향력순(street(0) biryani(1) north(1) south(0) fast(0) bakery(0))*/
+-- select if(south_indian_or_not = 0, 'south-0', 'south-1') as group_name, avg(average_price) as avg_price
+-- from indian_restaurants
+-- group by 1
+-- union
+-- select if(north_indian_or_not = 0, 'north-0', 'north-1') as group_name, avg(average_price) as avg_price
+-- from indian_restaurants
+-- group by 1
+-- union
+-- select if(fast_food_or_not = 0, 'fast-0', 'fast-1') as group_name, avg(average_price) as avg_price
+-- from indian_restaurants
+-- group by 1
+-- union
+-- select if(street_food = 0, 'street-0', 'street-1') as group_name, avg(average_price) as avg_price
+-- from indian_restaurants
+-- group by 1
+-- union
+-- select if(biryani_or_not = 0, 'biryani-0', 'biryani-1') as group_name, avg(average_price) as avg_price
+-- from indian_restaurants
+-- group by 1
+-- union
+-- select if(bakery_or_not = 0, 'bakery-0', 'bakery-1') as group_name, avg(average_price) as avg_price
+-- from indian_restaurants
+-- group by 1
+
+/*지역을 분석해 왜 평균가격이 낮은지 파악할 수 있다 ( 평균가격대 Rishikesh << Shimla )
+>> 위에서 분석한 대로 저렴한 가격으로 판매하는 지표가 높았기 때문임을 알 수 있다 */
+-- with base as(
+-- 	select location, south_indian_or_not, north_indian_or_not, fast_food_or_not, street_food, biryani_or_not, bakery_or_not
+--     from indian_restaurants
+-- 	where location in ('Rishikesh','Shimla')
+-- )
+-- select location, count(1) as tot_count, sum(south_indian_or_not) as south_cnt,
+-- sum(north_indian_or_not) as north_cnt, sum(fast_food_or_not) as fast_cnt,
+-- sum(street_food) as street_cnt, sum(biryani_or_not) as biryani_cnt,
+-- sum(bakery_or_not) as bakery_cnt
+-- from base
+-- group by 1
+
+/*위에서 했던 분석에서 +배달시간, 평점을 포함한 분석
+높은평점 영향력 순( bakery(0) biryani(0) north(0) south(1) fast(0) street(0))*/
+-- select if(south_indian_or_not = 0, 'south-0', 'south-1') as group_name, avg(average_price) as avg_price,
+-- avg(average_delivery_time) as avg_time, round(avg(rating),3) as avg_rating
+-- from indian_restaurants
+-- group by 1
+-- union
+-- select if(north_indian_or_not = 0, 'north-0', 'north-1') as group_name, avg(average_price) as avg_price,
+-- avg(average_delivery_time) as avg_time, round(avg(rating),3) as avg_rating
+-- from indian_restaurants
+-- group by 1
+-- union
+-- select if(fast_food_or_not = 0, 'fast-0', 'fast-1') as group_name, avg(average_price) as avg_price,
+-- avg(average_delivery_time) as avg_time, round(avg(rating),3) as avg_rating
+-- from indian_restaurants
+-- group by 1
+-- union
+-- select if(street_food = 0, 'street-0', 'street-1') as group_name, avg(average_price) as avg_price,
+-- avg(average_delivery_time) as avg_time, round(avg(rating),3) as avg_rating
+-- from indian_restaurants
+-- group by 1
+-- union
+-- select if(biryani_or_not = 0, 'biryani-0', 'biryani-1') as group_name, avg(average_price) as avg_price,
+-- avg(average_delivery_time) as avg_time, round(avg(rating),3) as avg_rating
+-- from indian_restaurants
+-- group by 1
+-- union
+-- select if(bakery_or_not = 0, 'bakery-0', 'bakery-1') as group_name, avg(average_price) as avg_price,
+-- avg(average_delivery_time) as avg_time, round(avg(rating),3) as avg_rating
+-- from indian_restaurants
+-- group by 1
+
+/*지역별 평균 별점이 가장 높은 지역과 낮은 지역 구분 (평균별점 Motihari << Junagadh)
++Aurangabad는 식당 수가 적어서 표본으로 삼기 부적합*/
+-- select location, avg(rating) as avg_rating, count(1) as cnt
+-- from indian_restaurants
+-- group by 1
+-- order by 2 -- desc
+-- limit 10
+
+/*지역을 분석해 왜 평균별점이 높은지 파악할 수 있다 (평균별점 Motihari << Junagadh)
+>> 위에서 분석한 대로 높은 평점을 가지게 하는 지표가 높았기 때문임을 알 수 있다 */
+-- with base as(
+-- 	select location, south_indian_or_not, north_indian_or_not, fast_food_or_not, street_food, biryani_or_not, bakery_or_not
+--     from indian_restaurants
+-- 	where location in ('Junagadh','Motihari')
+-- )
+-- select location, count(1) as tot_count, sum(south_indian_or_not) as south_cnt,
+-- sum(north_indian_or_not) as north_cnt, sum(fast_food_or_not) as fast_cnt,
+-- sum(street_food) as street_cnt, sum(biryani_or_not) as biryani_cnt,
+-- sum(bakery_or_not) as bakery_cnt
+-- from base
+-- group by 1
+
+데이터 파일을 보기 전 칼럼들과 양상을 보면서 대충 분석의 방향성을 미리 잡아놓는 것이 좋다
+salary.csv
+
+/*가설 1. work year = 3개의 값?*/
+select work_year, count(1)
+from salary
+group by 1
+order by 2
+
+/*2020~2023까지 4개의 데이터값이 나왔지만 2020~2021은 표본이 적기때문에 생략하자
+2022>2023에 연봉이 많이 올랐다*/
+select work_year, avg(salary_in_usd) as usd_salary
+from salary
+where work_year in (2022,2023)
+group by 1
+order by 2
+
+/*연봉 상승에 영향을 미친 칼럼은? 가설2.숙련도/직무명/거주국가/회사위치/회사사이즈 */
+
+/*1.숙련도에 따른 연봉차이
+높은연봉순 (EN MI SE EX) +MI-SE 사이에서 연봉차가 제일 많이 남*/
+select experience_level, avg(salary_in_usd) as usd_salary
+from salary
+where work_year in (2022,2023)
+group by 1
+order by 2
+
+/*2.직무명에 따른 연봉차이
+*/
+select job_title, avg(salary_in_usd) as usd_salary
+from salary
+where work_year in (2022,2023)
+group by 1
+order by 2
+
+/*2.직무명에 따른 연봉차이
+양이 많아서 나중에 다룸 or 비슷한 단어끼리 grouping 진행*/
+select job_title, avg(salary_in_usd) as usd_salary
+from salary
+where work_year in (2022,2023)
+group by 1
+order by 2
+
+/*3.직원 거주지에 따른 연봉차이
+마찬가지고 대륙별, 미국내외로 grouping*/
+select employee_residence, avg(salary_in_usd) as usd_salary
+from salary
+where work_year in (2022,2023)
+group by 1
+order by 2
+
+/*4.재택근무에 따른 연봉차이
+높은연봉순 ( 50 100 0 )+오히려 50퍼 재택근무하는 사람이 연봉이 적음*/
+select remote_ratio, avg(salary_in_usd) as usd_salary
+from salary
+where work_year in (2022,2023)
+group by 1
+order by 2
+
+/*5.회사사이즈에 따른 연봉차이
+높은연봉순 ( S L M )오히려 중간사이즈 회사가 제일 연봉이 큼*/
+select company_size, avg(salary_in_usd) as usd_salary
+from salary
+where work_year in (2022,2023)
+group by 1
+order by 2
+
+/*2023년이 연봉이 더 높은 이유 탐색*/
+/*숙련도 별 직원 수(2022년 2023년)*/
+with bef as(
+select work_year, experience_level, count(1) as cnt_2022
+from salary
+where work_year = 2022
+group by 1,2
+),
+aft as(
+select work_year, experience_level, count(1) as cnt_2023
+from salary
+where work_year = 2023
+group by 1,2
+)
+select bef.*, aft.cnt_2023
+from bef inner join aft on bef.experience_level = aft.experience_level
+
+/*엑셀을 통해 진행 == salary2.csv
+높은 연봉을 받는 SE 숙련도를 가진 사람들이 2023년에 더 많은 비중을 차지 >> 2023년이 연봉이 더 많음*/
+
+/*5.회사사이즈에 별 직원 수(2022년 2023년)*/
+with bef as(
+select work_year, company_size, count(1) as cnt_2022
+from salary
+where work_year = 2022
+group by 1,2
+),
+aft as(
+select work_year, company_size, count(1) as cnt_2023
+from salary
+where work_year = 2023
+group by 1,2
+)
+select bef.*, aft.cnt_2023
+from bef inner join aft on bef.company_size = aft.company_size
+
+/*엑셀을 통해 진행 == salary3.csv
+높은 연봉을 받는 M사이즈 회사들이 2023년에 더 많은 비중을 차지 >> 2023년이 연봉이 더 많음*/
+
+/*연도별 4.재택근무 비율 확인
+22년 55%, 23년 33% */
+select work_year, avg(remote_ratio) as avg_remote_ratio
+from salary
+where work_year in (2022, 2023)
+group by 1
+order by 1
+
+/*1.숙련도별 4.재택근무 비율
+(mi se ex en) senior의 재택근무 비중이 낮다(37%) == 23년도 들어서면서 가장 수가 많아진 senior*/
+select experience_level, avg(remote_ratio) as avg_remote_ratio
+from salary
+where work_year in (2022, 2023)
+group by 1
+order by 1
+
+
+/*5.회사사이즈별 4.재택근무 비율
+S사이즈 회사가 많은 비율을 차지해 보이지만 애초에 표본이 적어서 큰 상관관계는 없다*/
+select company_size, avg(remote_ratio) as avg_remote_ratio
+from salary
+where work_year in (2022, 2023)
+group by 1
+order by 1
+
+/*3.직원 거주지별 4.재택근무 비율*/
+with bef as(
+select work_year, if(employee_residence = 'US', 'in-us', 'out-us') as residence_group, count(1) as cnt_2022
+from salary
+where work_year = 2022
+group by 1,2
+),
+aft as(
+select work_year, if(employee_residence = 'US', 'in-us', 'out-us') as residence_group, count(1) as cnt_2023
+from salary
+where work_year = 2023
+group by 1,2
+)
+select bef.*, aft.cnt_2023
+from bef inner join aft on bef.residence_group = aft.residence_group
+
+/*엑셀에서 진행 = salary3.csv
+2023년 되서 us외 거주하는 사람의 비율이 감소 = 재택근무 비율 감소 = 높은 연봉*/
+
+/*2.직무별 키워드를 통한 grouping한 뒤 연봉 비교
+높은연봉순 (SP A C OTHER P M E S AC D) 4.재택순(P C M SP E OTHER S A D AC)*/
+select case
+when job_title like '%Scientist%' then 'S'
+when job_title like '%Director%' then 'D'
+when job_title like '%Engineer%' then 'E'
+when job_title like '%Analyst%' then 'A'
+when job_title like '%Architect%' then 'AC'
+when job_title like '%Consultant%' then 'C'
+when job_title like '%Manager%' then 'M'
+when job_title like '%Specialist%' then 'SP'
+when job_title like '%Practitioner%' then 'P'
+else 'OTHER'
+end as job_group, avg(salary_in_usd) as avg_salary, avg(remote_ratio) as avg_remote, count(1) as cnt
+from salary
+group by 1
+order by 3
+
+/*2.직무별 4.거주지 확인
+*/
+with base as(
+select case
+when job_title like '%Scientist%' then 'S'
+when job_title like '%Director%' then 'D'
+when job_title like '%Engineer%' then 'E'
+when job_title like '%Analyst%' then 'A'
+when job_title like '%Architect%' then 'AC'
+when job_title like '%Consultant%' then 'C'
+when job_title like '%Manager%' then 'M'
+when job_title like '%Specialist%' then 'SP'
+when job_title like '%Practitioner%' then 'P'
+else 'OTHER'
+end as job_group, if(employee_residence = 'US', 'in-us' ,'out-us') as residence_group
+from salary
+)
+g_1 as (
+select job_group, residence_group, count(1) as group_cnt
+from base
+group by 1,2
+)
+g_2 as(
+select job_group, count(1) as tot_cnt
+from base
+group by 1
+)
+
+select g_1.job_group, residence_group, group_cnt, group_cnt/tot_cnt as ratio
+from g_1 inner join g_2 on g_1.job_group = g_2.job_group
+
+/* 숫자 <> 숫자 == Pearson 상관계수
+카테고리(숙련도) <> 숫자(연봉) == Point by serial 상관계수*/
+
+
+===============
+all_seasons.csv
+
+/*전체적인 데이터 양상
+골고루 분포되어있는 듯함*/
+select season, count(1) as cnt
+from nba
+group by 1
+order by 1
+
+/*중복확인
+4개정도 중복이 생김 >> 동명이인?*/
+select count(1) as cnt, count(distinct season, player_name) as d_cnt
+from nba
+
+/*중복 위치확인
+중복이 되는 4명의 선수를 뽑음*/
+select player_name, season, count(1) as cnt
+from nba
+group by 1,2
+having cnt > 1
+
+/*어떤 내용의 중복인지 확인
+이름말고는 다른 칼럼의 내용은 전부 다른걸로 봐서 같은 데이터가 아닌 동명이인이 확실하다*/
+with dups as(
+select player_name, season, count(1) as cnt
+from nba
+group by 1,2
+having cnt > 1
+), 
+tot as(
+select *
+from nba
+)
+select tot.*
+from tot inner join dups on tot.player_name = dups.player_name and tot.season = dups.seasons
+
+/*중복 거르기
+단지 동명이인 이므로 다른 조건(team_abbreviation, season, college)를 distinct구문 안에 넣으면 중복 없이 표현이 가능하다
+>> Unique 칼럼 = 3개의 칼럼의 조합(이름,시즌,대학)*/
+select count(1) as cnt, count(distinct player_name, season, team_abbreviation) as d_cnt, count(distinct,season,college) as d_cnt_2
+from nba
+
+/*선수들 키/몸무게/나이의 시즌별 변화
+키, 몸무게는 점점 줄어들고, 게임수는 유지,감소되고, 득점은 증가하고, 리바운드는 유지되고, 어시스트도 증가된다.*/
+select season, avg(player_height) height, avg(player_weight) as weight, avg(gp) as gp, avg(pts) as pts, avg(reb) as reb, avg(ast) as ast
+from nba
+group by 1
+order by 1
+
+/*엑셀에서 진행
+그래프를 통한 추세 확인 (칼럼 선택 > 삽입 > 차트)
+시즌별 평균신장,몸무게 / 시즌별 평균게임수 / 시즌별 평균득점 / 시즌별 평균리바운드,어시스트 
+>> 평균 득점은 늘어나고 덩치는 줄어드는 추세로 보아 외곽슛을 쏘는 작은 덩치의 선수들로 기용되는 추세일 것이다  */
+
+/*draft에서 빨리 뽑힌 선수들의 신상
+먼저 뽑힌 사람의 키,나이가 시즌에 따라 점차 감소함
+>> 신체스펙보단 득점율이 높은 선수들을 뽑는 추세이다
+>> 어린 나이부터 두각을 드러내는 선수들이 많아졌다.*/
+select draft_year,  avg(player_height) height, avg(player_weight) as weight, avg(age) as age
+from nba
+where draft_round = 1
+and draft_number <= 10
+group by 1
+
+/*각 시즌별 평균득점 1위인 선수, 그리고 신상*/
+with max_pts as (
+select season, max(pts) as max_pt
+from nba
+group by 1
+),
+select m.season, player_name, age, player_height, player_weight, max_pt, gp
+from max_pts m inner join nba n on m.season = n.season and m.max_pt = n.pts
+order by 1
+
+/*각 시즌별 평균득점 상위 10위인 선수들의 평균득점*/
+with base as(
+select season, player_name, rank() over (partition by season order by pts desc) as rank, pts
+from nba
+),
+select season, avg(pts) as pts
+from base
+where rank <= 10
+group by 1
+order by 1
+
+++
+득점 <> 팀플레이 점수 상관계수
+출신 대학별로 뛰어난 선수 뽑고 비교 .. 서로비슷?
+++
+
+다양한 각도에서 데이터를 분석하는 연습을 해서 >> 분석목표가 명확/불명확한 경우에 대응하고, 분석을 통해 얻을 수 있는 인사이트를 확인하자
+데이터가 충분하지 않고, 수치를 간접적으로 추론하는 경우도 있다.
+
+
+
+
+
+
+
+
+
+
