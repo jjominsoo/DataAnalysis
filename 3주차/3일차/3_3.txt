@@ -1,0 +1,81 @@
+숫자
+*타입마다 범위가 다르므로 예상 데이터값의 범위를 생각해서 올바른 타입을 설정하자
+( BIT, TINYINY, BOOL(EAN), SMALLINT, MEDIUMMINT, INT(EGER), BIGINT/SERIAL, DECIMAL(M,D)/DEC/FIXED, FLOAT, DOUBLE )
+> 주로 BOOL INT DOUBLE + TINYINT SMALLINT 를 사용한다
+> type가 맞지 않으면 오류메세지를 띄우거나, 반올림해서 맞춘다
+
+문자
+CHAR : 정적공간차지 VARCHAR : 
+( CHAR, VARCHAR, TEXT, TINYTEXT, MEDIUMTEXT, LONGTEXT, ENUM, SET )
+> 주로 CHAR, VARCHAR사용 (유연함,빠름)
+
+이진(BLOB)
+데이터 무엇이든 집어넣음(0과1로 이루어진)
+( BLOB, TINYBLOB, MEDIUMBLOB, LONGBLOB, BINARY, VARBINARY
+
+배열
+배열 중첩해서도 가능 (nested array) .. json_array
+
+CREATE TABLE IF NOT EXISTS `products` (
+  `product_id` int unsigned NOT NULL,
+  `category` varchar(40) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `price` int unsigned NOT NULL,
+  `options` json NULL,
+  PRIMARY KEY (`product_id`)
+);
+INSERT INTO `products` (`product_id`,`category`,`name`,`price`,`options`) values
+  (0, '키즈', '어린이칫솔', 1500,json_array("빨강","파랑")),
+  (1, '스포츠', '손목보호대', 10000,json_array("s","m","l")),
+  (2, '주방용품', '밥그릇', 2000,json_array("소","중","대")),
+  (3, '디지털', '마우스', 15000,null);
+
++++ '[""]' / json_array(json_array(""),json_array(""))
+*추출 : select문에서 json_extract([칼럼], '
+> select options, json_extract(options,'$[0])
+
+Key-value
+key값을 통해 value값에 접근 .. json_object
+
+CREATE TABLE IF NOT EXISTS `managers_v2` (
+  `id` int unsigned NOT NULL,
+  `name` varchar(40) NOT NULL,
+  `managing` varchar(50) NOT NULL,
+  `info` json NULL,
+  PRIMARY KEY (`id`)
+);
+INSERT INTO `managers_v2` (`id`,`name`,`managing`,`info`) values
+  (0, '영희', '스포츠', json_object('off',json_array("일","월"),'substitude','민수')),
+  (1, '철수', '주방용품', json_object('off',json_array("화","수"),'substitude','길순')),
+  (2, '민수', '디지털',json_object('off',json_array("목","금"),'substitude','철수')),
+  (3, '길순', '키즈',json_object('off',json_array("금","토"),'substitude','영희'));
+
+select json_extract(info, '$.off') as off
+from managers_v2
+
+update managers_v2 set info = json_insert(info,'$.education_time',json_array(5,10))
+update managers_v2 set info = json_replace(info,'$.education_time',json_array(0,10))
+update managers_v2 set info = json_replace(info,'$.education_time',json_array(1,10)) where id = '0'
+update managers_v2 set info = json_replace(info,'$.education_time[0]',10)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

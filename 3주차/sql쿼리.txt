@@ -1,0 +1,446 @@
+http://sqlfiddle.com/
+
+https://www.programiz.com/sql/online-compiler/
+
+
+-- 1-2강
+CREATE TABLE IF NOT EXISTS `products` (
+  `product_id` int unsigned NOT NULL,
+  `category` varchar(40) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `price` int unsigned NOT NULL,
+  PRIMARY KEY (`product_id`)
+); -- DEFAULT CHARSET=utf8;
+
+INSERT INTO `products` (`product_id`, `category`, `name`, `price`) VALUES
+  (0, '키즈', '어린이칫솔', 1500),
+  (1, '스포츠', '손목보호대', 10000),
+  (2, '주방용품', '밥그릇', 2000),
+  (3, '디지털', '마우스', 15000);
+
+
+CREATE TABLE IF NOT EXISTS `managers` (
+  `id` int unsigned NOT NULL,
+  `name` varchar(40) NOT NULL,
+  `managing` varchar(50) NOT NULL,
+  `off` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) DEFAULT CHARSET=utf8;
+
+INSERT INTO `managers` (`id`, `name`, `managing`, `off`) VALUES
+  (0, '영희', '스포츠', '토,일'),
+  (1, '철수', '주방용품', '일,월'),
+  (2, '민수', '디지털', '화,토'),
+  (3, '길순', '키즈', '금,토');
+
+
+CREATE TABLE IF NOT EXISTS `orders` (
+    `order_id` int unsigned NOT NULL,
+    `user_name` varchar(40) NOT NULL,
+    `product_name` varchar(50) NOT NULL,
+    `purchase_date` varchar(40) NULL,
+PRIMARY KEY (`order_id`)
+) DEFAULT CHARSET=utf8;
+
+INSERT INTO `orders` (`order_id`, `user_name`, `product_name`, `purchase_date`) VALUES
+  (0, '영희', '키보드', '20231001'),
+  (1, '민수', '주전자', '20231002'),
+  (2, '길동', '경량의자', '20231003'),
+  (3, '길순', '텐트', '20231004'),
+  (4, '철수', '보리차', NULL);
+
+
+CREATE TABLE IF NOT EXISTS `products_v2` (
+  `product_id` int unsigned NOT NULL,
+  `category` varchar(40) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `price` int unsigned NOT NULL,
+  PRIMARY KEY (`product_id`)
+) DEFAULT CHARSET=utf8;
+
+INSERT INTO `products_v2` (`product_id`, `category`, `name`, `price`) VALUES
+  (0, '키즈', '어린이칫솔', 1500),
+  (1, '스포츠', '손목보호대', 10000),
+  (2, '주방용품', '밥그릇', 2000),
+  (3, '디지털', '마우스', 15000),
+  (4, '청소용품', '청소포', 2000),
+  (5, '문구', '가위', 2000),
+  (6, '욕실용품', '수건', 2000);
+
+
+CREATE TABLE IF NOT EXISTS `products_v3` (
+  `product_id` int unsigned NOT NULL,
+  `category` varchar(40) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `price` int unsigned NOT NULL,
+  `sale_yn` varchar(10) NOT NULL,
+  PRIMARY KEY (`product_id`)
+) DEFAULT CHARSET=utf8;
+
+INSERT INTO `products_v3` (`product_id`, `category`, `name`, `price`, `sale_yn`) VALUES
+  (0, '키즈', '어린이칫솔', 1500, 'yes'),
+  (1, '키즈', '어린이치약', 2000, 'yes'),
+  (2, '키즈', '어린이담요', 5000, 'no'),
+  (3, '키즈', '어린이모자', 5000, 'no'),
+  (4, '주방용품', '숟가락', 1000, 'yes'),
+  (5, '주방용품', '밥그릇', 2000, 'yes'),
+  (6, '주방용품', '젓가락', 1000, 'no'),
+  (7, '디지털', '마우스', 15000, 'yes'),
+  (8, '디지털', '키보드', 10000, 'yes'),
+  (9, '욕실용품', '샴푸', 10000, 'yes'),
+  (10, '욕실용품', '바디워시', 8000, 'no'),
+  (11, '욕실용품', '수건', 2000, 'yes');
+
+
+
+
+
+
+-- 1-3강
+CREATE TABLE IF NOT EXISTS `products` (
+  `product_id` int unsigned NOT NULL,
+  `category` varchar(40) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `price` int unsigned NOT NULL,
+  PRIMARY KEY (`product_id`)
+) DEFAULT CHARSET=utf8;
+
+INSERT INTO `products` (`product_id`, `category`, `name`, `price`) VALUES
+  (0, '키즈', '어린이칫솔', 1500),
+  (1, '스포츠', '손목보호대', 10000),
+  (2, '주방용품', '밥그릇', 2000),
+  (3, '디지털', '마우스', 15000);
+
+
+CREATE TABLE IF NOT EXISTS `managers` (
+  `id` int unsigned NOT NULL,
+  `name` varchar(40) NOT NULL,
+  `managing` varchar(50) NOT NULL,
+  `off` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) DEFAULT CHARSET=utf8;
+
+INSERT INTO `managers` (`id`, `name`, `managing`, `off`) VALUES
+  (0, '영희', '스포츠', '토,일'),
+  (1, '철수', '주방용품', '일,월'),
+  (2, '민수', '디지털', '화,토'),
+  (3, '길순', '키즈', '금,토');
+
+
+CREATE TABLE IF NOT EXISTS `clicks` (
+  `clk_index` int unsigned NOT NULL,
+  `product_id` int unsigned NOT NULL,
+  `user_name` varchar(20) NOT NULL,
+  `date` char(8) NOT NULL,
+  PRIMARY KEY (`clk_index`)
+) DEFAULT CHARSET=utf8;
+
+
+INSERT INTO `clicks` (`clk_index`, `product_id`, `user_name`, `date`) VALUES
+  (0, 0, '영희', '20231014'),
+  (1, 0, '철수', '20231014'),
+  (2, 0, '영희', '20231014'),
+  (3, 0, '길순', '20231014'),
+  (4, 1, '철수', '20231014'),
+  (5, 1, '길동', '20231014'),
+  (6, 2, '길순', '20231014'),
+  (7, 3, '영희', '20231014'),
+  (8, 3, '갑순', '20231014'),
+  (9, 3, '둘리', '20231014'),
+  (10, 0, '영희', '20231015'),
+  (11, 0, '철수', '20231015'),
+  (12, 1, '길동', '20231015'),
+  (13, 2, '민수', '20231015'),
+  (14, 3, '길동', '20231015'),
+  (15, 2, '길순', '20231015');
+
+CREATE TABLE IF NOT EXISTS `orders` (
+  `odr_index` int unsigned NOT NULL,
+  `product_id` int unsigned NOT NULL,
+  `user_name` varchar(20) NOT NULL,
+  `date` char(8) NOT NULL,
+  PRIMARY KEY (`odr_index`)
+) DEFAULT CHARSET=utf8;
+
+
+INSERT INTO `orders` (`odr_index`, `product_id`, `user_name`, `date`) VALUES
+  (0, 0, '영희', '20231014'),
+  (1, 2, '길순', '20231014'),
+  (2, 3, '길동', '20231015'),
+  (3, 1, '길동', '20231015')
+  ;
+
+
+CREATE TABLE IF NOT EXISTS `products_B` (
+  `product_id` int unsigned NOT NULL,
+  `category` varchar(40) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `price` int unsigned NOT NULL,
+  PRIMARY KEY (`product_id`)
+) DEFAULT CHARSET=utf8;
+
+INSERT INTO `products_B` (`product_id`, `category`, `name`, `price`) VALUES
+  (33, '키즈', '어린이칫솔', 2000),
+  (34, '스포츠', '무릎보호대', 13000),
+  (35, '주방용품', '국자', 5000);
+
+CREATE TABLE IF NOT EXISTS `managers_v2` (
+  `id` int unsigned NOT NULL,
+  `name` varchar(40) NOT NULL,
+  `managing` varchar(50) NOT NULL,
+  `off` varchar(50) NOT NULL,
+  `substitute` int unsigned NOT NULL,
+  PRIMARY KEY (`id`)
+) DEFAULT CHARSET=utf8;
+
+
+INSERT INTO `managers_v2` (`id`, `name`, `managing`, `off`, `substitute`) VALUES
+  (0, '영희', '스포츠', '토,일', 1),
+  (1, '철수', '주방용품', '일,월', 2),
+  (2, '민수', '디지털', '화,토', 3),
+  (3, '길순', '키즈', '금,토', 0);
+
+
+
+ CREATE TABLE IF NOT EXISTS `orders_v2` (
+  `odr_index` int unsigned NOT NULL,
+  `product_id` int unsigned NOT NULL,
+  `user_name` varchar(20) NOT NULL,
+  `date` int unsigned NOT NULL,
+  PRIMARY KEY (`odr_index`)
+) DEFAULT CHARSET=utf8;
+
+
+INSERT INTO `orders_v2` (`odr_index`, `product_id`, `user_name`, `date`) VALUES
+  (0, 3, '철수', 20231101),
+  (1, 0, '민수', 20231103),
+  (2, 3, '갑동', 20231103),
+  (3, 2, '갑순', 20231104)
+  ;
+
+ CREATE TABLE IF NOT EXISTS `orders_v3` (
+  `odr_index` int unsigned NOT NULL,
+  `product_id` int unsigned NOT NULL,
+  `user_name` varchar(20) NOT NULL,
+  `date` int unsigned,
+  PRIMARY KEY (`odr_index`)
+) DEFAULT CHARSET=utf8;
+
+
+INSERT INTO `orders_v3` (`odr_index`, `product_id`, `user_name`, `date`) VALUES
+  (0, 3, '철수', 20231101),
+  (1, 0, '민수', 20231103),
+  (2, 3, '갑동', 20231103),
+  (3, 2, '갑순', 20231104),
+  (4, 1, '갑순', NULL);
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- DDL/DML (sqlfiddle 외에 다른 실습 사이트)
+CREATE TABLE IF NOT EXISTS `products` (
+  `product_id` int(6) NOT NULL,
+  `category` varchar(40) NOT NULL,
+  `name` varchar(10) NOT NULL,
+  `price` int unsigned NOT NULL,
+  PRIMARY KEY (`product_id`)
+);
+
+INSERT INTO `products` (`product_id`, `category`, `name`, `price`) VALUES
+  (0, '키즈', '어린이칫솔', 1500),
+  (1, '스포츠', '손목보호대', 10000),
+  (2, '주방용품', '밥그릇', 2000),
+  (3, '디지털', '마우스', 15000);
+
+
+-- JSON ARRAY
+
+CREATE TABLE IF NOT EXISTS `products` (
+  `product_id` int(6) NOT NULL,
+  `category` varchar(40) NOT NULL,
+  `name` varchar(10) NOT NULL,
+  `price` int unsigned NOT NULL,
+  `options` JSON NULL,
+  PRIMARY KEY (`product_id`)
+);
+
+INSERT INTO `products` (`product_id`, `category`, `name`, `price`,
+                       `options`) VALUES
+  (0, '키즈', '어린이칫솔', 1500, JSON_ARRAY('빨강','파랑')),
+  (1, '스포츠', '손목보호대', 10000, JSON_ARRAY('S', 'M','L')),
+  (2, '주방용품', '밥그릇', 2000, JSON_ARRAY('소', '중','대')),
+  (3, '디지털', '마우스', 15000, NULL) ;
+
+-- 쌍따옴표, 홑따옴표 구분
+INSERT INTO `products` (`product_id`, `category`, `name`, `price`,
+                       `options`) VALUES
+  (0, '키즈', '어린이칫솔', 1500, '["빨강","파랑"]'),
+  (1, '스포츠', '손목보호대', 10000, '["S","M", "L"]'),
+  (2, '주방용품', '밥그릇', 2000, '["소", "중","대"]'),
+  (3, '디지털', '마우스', 15000, '[1,2,3]') ;
+
+
+-- Nested Array
+INSERT INTO `products` (`product_id`, `category`, `name`, `price`,
+                       `options`) VALUES
+  (0, '키즈', '어린이칫솔', 1500, '["빨강","파랑"]'),
+  (1, '스포츠', '손목보호대', 10000, '["S","M", "L"]'),
+  (2, '주방용품', '밥그릇', 2000, '["소", "중","대"]'),
+  (3, '디지털', '마우스', 15000, JSON_ARRAY(JSON_ARRAY("흰색", "파랑"), JSON_ARRAY("초록", "보라"), JSON_ARRAY("갈색", "검정"))) ;
+
+
+
+CREATE TABLE IF NOT EXISTS `managers_v2` (
+  `id` int unsigned NOT NULL,
+  `name` varchar(40) NOT NULL,
+  `managing` varchar(50) NOT NULL,
+  `off` varchar(50) NOT NULL,
+  `substitute` int unsigned NOT NULL,
+  PRIMARY KEY (`id`)
+);
+
+
+INSERT INTO `managers_v2` (`id`, `name`, `managing`,  `off`, `substitute`) VALUES
+  (0, '영희', '스포츠', '토,일', 1),
+  (1, '철수', '주방용품', '일,월', 2),
+  (2, '민수', '디지털', '화,토', 3),
+  (3, '길순', '키즈', '금,토', 0);
+
+
+CREATE TABLE IF NOT EXISTS `managers_v2` (
+  `id` int unsigned NOT NULL,
+  `name` varchar(40) NOT NULL,
+  `managing` varchar(50) NOT NULL,
+  `off` varchar(50) NOT NULL,
+  `substitute` int unsigned NOT NULL,
+  PRIMARY KEY (`id`)
+) DEFAULT CHARSET=utf8;
+
+
+INSERT INTO `managers_v2` (`id`, `name`, `managing`, `off`, `substitute`) VALUES
+  (0, '영희', '스포츠', '토,일', 1),
+  (1, '철수', '주방용품', '일,월', 2),
+  (2, '민수', '디지털', '화,토', 3),
+  (3, '길순', '키즈', '금,토', 0);
+
+
+-- JSON Key-value
+
+CREATE TABLE IF NOT EXISTS `managers_v2` (
+  `id` int unsigned NOT NULL,
+  `name` varchar(40) NOT NULL,
+  `managing` varchar(50) NOT NULL,
+  `info` JSON NULL,
+  PRIMARY KEY (`id`)
+);
+
+
+INSERT INTO `managers_v2` (`id`, `name`, `managing`, `info`) VALUES
+  (0, '영희', '스포츠', JSON_OBJECT('off', JSON_ARRAY('일', '월'), 'substitute', '민수')),
+  (1, '철수', '주방용품', JSON_OBJECT('off', JSON_ARRAY('화', '수'), 'substitute', '길순')),
+  (2, '민수', '디지털', JSON_OBJECT('off', JSON_ARRAY('목', '금'), 'substitute', '철수')),
+  (3, '길순', '키즈', JSON_OBJECT('off', JSON_ARRAY('금', '토'), 'substitute', '영희'));
+
+
+
+-- nested
+
+
+CREATE TABLE IF NOT EXISTS `managers_v2` (
+  `id` int unsigned NOT NULL,
+  `name` varchar(40) NOT NULL,
+  `managing` varchar(50) NOT NULL,
+  `info` JSON NULL,
+  PRIMARY KEY (`id`)
+);
+
+
+INSERT INTO `managers_v2` (`id`, `name`, `managing`, `info`) VALUES
+  (0, '영희', '스포츠', JSON_OBJECT('off', JSON_ARRAY('일', '월'), 'substitute', '민수', 'education_time', JSON_OBJECT('데이터', 3, '소방', 2) )),
+  (1, '철수', '주방용품', JSON_OBJECT('off', JSON_ARRAY('화', '수'), 'substitute', '길순', 'education_time', JSON_OBJECT('인사', 2, '데이터', 3) )),
+  (2, '민수', '디지털', JSON_OBJECT('off', JSON_ARRAY('목', '금'), 'substitute', '철수', 'education_time', JSON_OBJECT('보안', 3, '회계', 1 ))),
+  (3, '길순', '키즈', JSON_OBJECT('off', JSON_ARRAY('금', '토'), 'substitute', '영희', 'education_time', JSON_OBJECT('인공지능', 1, '소방', 1)));
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- DDL/DML (기타)
+
+CREATE TABLE IF NOT EXISTS `products_B` (
+  `product_id` int unsigned NOT NULL,
+  `category` varchar(40) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `price` int unsigned NOT NULL,
+  PRIMARY KEY (`product_id`)
+);
+
+INSERT INTO `products_B` (`product_id`, `category`, `name`, `price`) VALUES
+  (0, '키즈', '어린이칫솔', 1500),
+  (1, '스포츠', '손목보호대', 10000),
+  (2, '주방용품', '밥그릇', 2000),
+  (3, '디지털', '마우스', 15000);
+
+
+CREATE TABLE IF NOT EXISTS `clicks` (
+  `clk_index` int unsigned NOT NULL,
+  `product_id` int unsigned NOT NULL,
+  `user_name` varchar(20) NOT NULL,
+  `date` char(8) NOT NULL,
+  PRIMARY KEY (`clk_index`)
+);
+
+
+INSERT INTO `clicks` (`clk_index`, `product_id`, `user_name`, `date`) VALUES
+  (0, 0, '영희', '20231014'),
+  (1, 0, '철수', '20231014'),
+  (2, 0, '영희', '20231014'),
+  (3, 0, '길순', '20231014'),
+  (4, 1, '철수', '20231014'),
+  (5, 1, '길동', '20231014'),
+  (6, 2, '길순', '20231014'),
+  (7, 3, '영희', '20231014'),
+  (8, 3, '갑순', '20231014'),
+  (9, 3, '둘리', '20231014'),
+  (10, 0, '영희', '20231015'),
+  (11, 0, '철수', '20231015'),
+  (12, 1, '길동', '20231015'),
+  (13, 2, '민수', '20231015'),
+  (14, 3, '길동', '20231015'),
+  (15, 2, '길순', '20231015');
+
+
+
+
+-- 6강 DDL
+
+CREATE TABLE IF NOT EXISTS `events` (
+  `event_index` int unsigned NOT NULL,
+  `product_id` int unsigned NOT NULL,
+  `event_end` char(10) NOT NULL,
+  PRIMARY KEY (`event_index`)
+);
+
+INSERT INTO `events` (`event_index`, `product_id`, `event_end`) VALUES
+  (0, 0, '2023-11-01'),
+  (1, 1, '2023-11-02'),
+  (2, 2, '2023-10-31'),
+  (3, 3, '2023-10-14');
+

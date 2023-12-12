@@ -1,0 +1,88 @@
+
+JOIN : 2개 이상의 테이블을 key기준으로 결합시키는 것
+테이블을 목적별로 나누는 이유는 1.데이터 중복저장 방지 2.관리 용이 >> 하지만 실시간처리가 좋다면? 중복을 감수하더라도 한 테이블에서 하는게 용이
+*Inner Join ~ on : 교집합 (행 수가 줄어들음 > 빠름)
+
+select clicks.*, 1 as ordered, name
+from clicks inner join orders
+on clicks.user_name = orders.user_name
+and clicks.product_id = orders.product_id
+and clicks.date = orders.date
+inner join products on clicks.product_id = products.product_id
+
+*Left/Right join : 차집합 (왼/오른쪽 테이블을 기준으로 오른/왼쪽 테이블 데이터를 가져옴 .. 행 수가 늘어남 )
+
+select clicks.*, orders.odr_index, products.name, products.category
+from clicks left join orders
+on clicks.user_name = orders.user_name
+and clicks.product_id = orders.product_id 
+and clicks.date = orders.date
+inner join products on clicks.product_id = products.product_id
+where products.category = '디지털'
+and odr_index is NULL
+
+*Full Outer Join(union) : 합집합 (모든 테이블 가져옴) left join + right join
+
+select o.*, clk_index
+from clicks c left join orders o
+on c.user_name=  o.user_name
+and c.product_id = o.product_id
+and c.date = o.date
+where c.user_name = '영희'
+union
+select o.*, clk_index
+from clicks c left join orders o
+on c.user_name=  o.user_name
+and c.product_id = o.product_id
+and c.date = o.date
+where c.user_name = '철수'
+
+*Cross Join : 가능한 모든 조합 >> 과부화가 걸릴 수 있다.
++테이블 간의 유사도를 통해 유저에 대한 추천을 진행할 수 있다.( A테이블에서 높은 점수를 준 유저들이 보통 B테이블에서도 높은 점수를 주면 ~ )_
+
+select products.*,
+products_B.product_id as B_product_id,
+products_B.category as B_category,
+products_B.name as B_name,
+products_B.price as B_price
+from products cross join products_B
+
+*Self Join : 자기자신과 결합 ( inner join 사용 )
+
+*Alias : 별칭
+*필터링 : join이 다 된 후 where절을 통해 필터링 진행+select >> 사실 필터를 먼저 걸고 join을 진행하는게 편하다
+> 결과 테이블에 대한 해석도 중요하다
+
+*with : CTE, 임시 결과 집합을 생성 > 쉽게 작성
+
+WITH odr_cnt as (
+  select c.customer_id, count(distinct order_id) as odr_cnt, sum(amount) as total_purchase
+  from customers c inner join orders o on c.customer_id = o.customer_id
+  group by 1
+  order by 2 desc
+),
+ship_cnt as (
+select c.customer_id, count(distinct shipping_id) as ship_cnt
+  from customers c inner join shippings s on c.customer_id = s.customer
+  where status = 'Pending'
+  group by 1
+  order by 2 desc
+)
+select oc.customer_id, odr_cnt, total_purchase, coalesce(ship_cnt,0) as shipping_cnt
+from odr_cnt oc left join ship_cnt sc on oc.customer_id = sc.customer_id
+
+*subquery 
+**select에서 사용
+select user_name, avg(price) as avg_price, (select avg(price) from orders o inner join products p on o.product_id = p.product_id) as total_avg_price
+from orders o inner join products p on o.product_id = p.product_id
+group by 1
+order by 2 desc
+
+**from에서 사용 >> join 전에 필터링이 작용 .. 성능상 이점
+select c.*
+from(select name from managers where managing in ('스포츠', '주방용품')) a
+inner join clicks c on a.name = c.user_name
+
+**where에서 사용
++동일한 결과물이어도 뽑는 쿼리는 다양하다 ( subquery / with + join ) >> 상황에 맞는 쿼리방식 설정
+
