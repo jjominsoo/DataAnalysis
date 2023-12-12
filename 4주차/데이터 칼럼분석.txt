@@ -39,4 +39,55 @@ Sales Method : The approach or channel used by the retailer to sell its products
 이익
 판매방식
 
-1.
+1.각 Retailer에 대한 조사
+1-1. Amazon		:
+1-2. Fool Locker	:
+1-3. Kohl's		: 백화점 소매체인
+1-4. Sports Direct	:
+1-5. Walmart		:
+1-6. Westgear		:
+
+
+
+
+
+
+
+westgear는 out < on < in 
+sportdirect, walmart는 in < on < out
+나머지는 in < out < on 순서로 팔렸다.
+
+가격대는 
+amazon, footlocker	: af < sf < p
+>> 이 두 쇼핑몰이 더 많이 갖고 있는 데이터 값?
+나머지			: sf < af < p
+
+남녀가격차이는
+a	: 여성이 더 비쌈
+af, sf	: 남성이 더 비쌈
+
+amazon, footlocker	: a < af < sf
++특히 sf이 가격차이가 크다
+sportdirect		: af < sf < a
+walmart			: a < sf ~= af
+westgear		: sf ~= a < af 
+
+팔린 물건 갯수
+남성			: a < af < sf
+여성			: af < sf < a
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
