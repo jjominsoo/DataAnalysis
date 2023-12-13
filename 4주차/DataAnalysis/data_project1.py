@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
-data = pd.read_csv("C:/Users/jjomi/OneDrive/바탕 화면/데브코스-데이터분석2/4주차/data_sales (1).csv")
+# data = pd.read_csv("C:/Users/jjomi/OneDrive/바탕 화면/데브코스-데이터분석2/4주차/data_sales (1).csv")
+data = pd.read_csv("C:/Users/user/OneDrive/바탕 화면/데브코스-데이터분석2/4주차/data_sales (1).csv")
 print(data.columns)
 
 data['Retailer'].fillna("ETC",inplace=True)
