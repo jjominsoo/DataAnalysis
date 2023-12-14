@@ -12,7 +12,7 @@ for i,d in enumerate(data['Retailer']):
     data.loc[i, 'Retailer'] = new_d
 
 data['Retailer ID'].fillna(0,inplace=True)
-# id_list = [1128299,1185732,1189833,1197831]
+id_list = [1128299,1185732,1189833,1197831]
 id_list = []
 for i,d in enumerate(data['Retailer ID']):
     # if i == 0:
@@ -152,7 +152,7 @@ with pd.option_context('display.max_columns',None):
     print(data.head(10))
     print(data.dtypes)
 
-data.to_csv("adidas_sales.csv",index=False)
+data.to_csv("C:/Users/user/OneDrive/바탕 화면/데브코스-데이터분석2/4주차/adidas_sales.csv",index=False)
 ## 1차 전처리 완료
 ## 일단 Retailer, Region 다 약어로 고쳐보자
 ## State, City는 소문자로 그냥 통일

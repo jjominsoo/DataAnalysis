@@ -23,9 +23,6 @@ Operating Profit : The profit earned by the retailer from its normal business op
 Sales Method : The approach or channel used by the retailer to sell its products or services.
 
 
-
-
-
 소매상
 소매상 ID
 발송날짜
