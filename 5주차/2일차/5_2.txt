@@ -1,0 +1,5 @@
+Redshift
+!!! Cluster생성에서 subnet group을 찾을 수 없다고 나온다.
+
+
+SQL
