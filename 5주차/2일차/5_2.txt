@@ -5,6 +5,67 @@ Redshift
 ID
 사용자 ID	: 사용자 고유 ID
 세션 ID	: 세션 마다 부여되는 ID
-+세션 : 사용자 방문을 논리적인 단위로 나눈 것 .. 1.링크(광고)를 타고 오거나 2.직접 방문하거나 3.30분간 interaction이 없다가 뭔가를 할때 세션이 생성
->> 1사용자 N세션
++세션 : 사용자 방문을 논리적인 단위로 나눈 것 .. 1.링크(광고)를 타고 오거나 2.직접 방문하거나 3.30분간 interaction이 없다가 뭔가를 할때 세션이 생성 .. 1사용자 N세션 (userid : 동일, sessionid : 다름)
+>> 마케팅 자료, 사용자 트래픽, DAU WAU MAU(Active user)로 사용
+
+세션이 여러개 존재 : 접근방식이 다 다름(가격비교, 변심 등) >> 그럼 상품이 구매 완료 되면 어떤 접근방식에 credit을 줄꺼냐?
+1. first-channel attribution / 2. last-channel .. / 3. multi-channel 
+
+SQL문
+다수의 sql문	> ;로 구분
+주석		> -- 한줄 , /* */ 여러줄
+포맷팅 규칙필요	> 가독성을 증가시키기 위함	(키워드=대문자)
+테이블 명명규칙	> 마찬가지로 가독성 증가 	(단수/복수 .. _/대문자)
+
+DDL
+1. Create
+[ Create TABLE table_name ]
+primary key 속성 > 빅데이터 데이터웨어하우스에선 보장 X > 단순히 이걸 key로 써라 라는 주석느낌으로 사용하자
++CTAS [ CREATE TABLE table_name AS SELECT ] : 테이블 분리해서 새로운 테이블 생성
+2. Drop
+[ DROP TABLE IF EXISTS table_name ]
+DROP : 테이블 전체 삭제 ~= Truncate : 테이블전체삭제 + transaction 사용 X 
+<> DELETE FROM : 레코드만 삭제
+3. Alter
+[ ALTER TABLE table_name ]
+ALTER TABLE table_name ADD COLUMN 필드이름 필드타입
+ALTER TABLE table_name RENAME 필드이름 to 새이름
+ALTER TABLE table_name DROP COLUMN 필드이름
+ALTER TABLE table_name RENAME to 새테이블이름
+
+DML
+1. Select
+레코드를 읽어오는 것
++ from, where, group by, order by와 같이 씀
+2. insert into / update from / delete from
+
+
+실습에서 주의점
+1. Clean Data는 존재하지 않음 >> 매번 데이터를 의심하고, 노가다를 통해 직접 데이터를 확인
+how?
+1.중복레코드?
+2.최신데이터?
+3.Primary key 유니크성?
+4.NULL값? 
+>>> uni test 형태의 함수를 만들어 매번 쉽게 확인해보자 
+
+2. 테이블 정리 >> 중요 테이블, 메타정보를 잘 관리해야함
+> Data discovery 문제 .. 어떤 테이블에 내가 원하고 신뢰하는 정보가 있지? 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
