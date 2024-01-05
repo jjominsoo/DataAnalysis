@@ -1,0 +1,5 @@
+Colab 연습용 코드
+https://colab.research.google.com/drive/1DHECEzN8QCo4MnhLRpsKgB6wh5J5gm10?usp=drive_link
+
+실습용 엑셀 
+https://docs.google.com/spreadsheets/d/1wmAQ8bWCZUMvNDz07IINuqQ-C_GYugTpeyCmB2DFS-o/edit?usp=sharing
