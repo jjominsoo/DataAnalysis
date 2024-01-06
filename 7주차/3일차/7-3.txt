@@ -1,0 +1,161 @@
+Dataframe
+
+pd.Dataframe(딕셔너리) ('key' = [value1,value2,..])
+!!모든 key마다 value 수가 같아야 생성됨
+
+
+df['열이름'] 		= Series
+df[['열1','열2']]	= Dataframe
+
++열을 만들때 사용하는 함수 이름으로 만들지 마라 ( shape, info .. )
+.
+.shape
+.info()		== 세로줄(열)을 가로로 눕혀서 확인한다고 생각해라
+		>> 1.열당 데이터 몇개?=세로줄몇개?	(RangeIndex: 'K' entries, 0 to 'K-1')
+		>> 2.열당 NoneNull 몇개?		(# | Column | 'K' non-null | object)
+		>> 3.열당 타입수?			(dtype) .. 한가지 타입(int64/bool/..) or 짬뽕(object)
+.size
+.values		>> 그냥 행열 방식으로 모든 데이터 확인
+.dtypes
+.index		
+.columns		
+.axes		>> index, columns 같이 실행시킨거 보여줌
+.describe()	>> 숫자타입인 열들에 대해 통계를 시전
+
+결국 dataframe도 series의 집합 >> 함수적용 가능
+
+.sum
+.max
+.min
+.mean
+.median
+.prod		모든 곱
+.count		비결측치 개수
+.value_counts	빈도
+.describe	요약 통계량
+.mode		최빈값
+.std		표준편차
+.var		분산
+.quantile	분위수
+.cumsum		누적 합
+.cumprod
+.cummax
+.cummin
+
+다만 어느 방향으로 적용시킬지가 중요
+axis = 0,'index'(기본값)		== 세로줄(열)에 대한 데이터들 다룸
+axis = 1,'columns'		== 가로줄(행)에 대한 데이터들 다룸
+
+
+++데이터 프레임 좌측정렬
+%%html
+<style> .rendered_html table{margin-left:5px} </style>
+
+
+데이터전처리
+# 결측치 처리
+1. df.info()를 통해 결측치 확인 >> 통계를 위해 int/float로 변경해야함
+2. 숫자형 데이터로 변환해야함	( .str.replace(',','') )
+3. 결측치 대체			( .fillna(123) )
++df.info나 df['열'].count로 중간체크
+4. dtype 변환			( .astype('int64') )
+
+
++.describe()활용
+
+percentiles=[.K,.L]	>> 기본 describe의 25% 50% 75%말고 다른 비율(K%, L%)을 보고 싶을 때 활용
+numeric_only = True	>> df에 있는 숫자데이터만 활용 (max,sum,mean 등)
+quantile(q=.K)		>> 해당 비율(K%)의 분기점 표시
+include			>> ='number'(기본값)	: 숫자타입을 가진 열들
+			>> ='O'			: Object
+			>> =['O','int']		: Object + int
+			>> ='all'		: 모든
+
+
+#데이터 정렬
+nlargest,nsmallest	sort_values와 비슷함
+
+.nlargest
+n=K			>> K개 보여줌 
+columns=['열']		>> '열' 기준으로 높은 순서대로
+keep='all'		>> 중복값이 있으면 K개가 넘어가도 다 보여줌
+
+
+#index 처리
+RangeIndex말고 열을 index로 쓰고 싶을때
+
+.set_index('열')
+drop=True)	(기본값)	>> 열 삭제
+drop=False)		>> 열 보존
+
+.index.name('이름')	>> 열 이름 변경 (선언과 동시에 사용 불가)
+
+.reset_index()		>> 원상복귀
+drop=True)		>> 열 삭제
+drop=False)	(기본값)	>> 열 보존
+
+애초에 선언할때 해도 되지만 그냥 하자
+
+#열 삭제
+.drop()
+1. 열삭제
+columns=['열','열2',..]
+['열1','열2',..], axis=1
+2. 행삭제
+label=K
+label=[a,b,c]
+[a,b,c]
+
++오류무시
+errors='ignore'
+
+#없는 열 조회,추가
+1. 조회
+df['열']에서 '열'이 존재하지 않으면 에러가 뜸 
+>> 단순히 조회를 목적으로 하려면 .get()사용
+.get(['열'])
+
+2. 추가
+
+1.df[]
+df['열'] = 값(int,bool,list..)
++값(list)과 df는 같은 갯수의 행을 가지고 있어야함
++단! 값(Series)는 결측치를 자동으로 NaN으로 설정해서 채워넣는다
+
+2.insert()
+loc=5			>>5번째에 삽입
+column='열'		>>열이라는 이름으로 생성
+value=None		>>None값을 가진 열 생성	.. 처음 추가할 땐 describe나 다른 통계에 사용되지 않도록 None으로 생성하는 것이 좋다
+allow_duplicates = True 	>>같은 이름의 열 생성가능
+
+
+>> 새로 데이터를 추가할땐 Series로 변환해서 사용하자
+
+#결측치 관리(데이터 다루기)
+버리거나, 채워서 사용
+
+1.dropna()		
+axis=0		(기본값)	>> 가로줄(행)을 버림
+axis=1			>> 세로줄(열)을 버림
+how='any'	(기본값)	>> 1개라도 있으면 버림
+how='all'		>> 전부 결측치라면 버림
+subset=['열']		>> 해당 열만 결측치확인
+
+2.fillna()
+value=K			>>K로 대체해서 사용
+method='ffill'		>>이전 데이터값 사용
+method='bfill'		>>이후 데이터값 사용
+axis=0		(기본값)	>>위에서 아래(행)로 훑음
+axis=1			>>왼쪽에서 오른쪽(열)으로 훑음
+limit=k			>>k개까지만 복사
+
+#키워드 조회
+
+1.정확한 조회
+.loc['키워드']			>>df에서 정확한 키워드 검색 .. Series로 반환
+
+2.포함 조회
+df['열'].str.contains('키워드')	>>키워드를 포함한 검색 .. Series로 반환 >> df[결과]로 한번 더 감싸서 보기쉽게 하자
+== df[df['열'].str.contains('키워드')]
+
+
