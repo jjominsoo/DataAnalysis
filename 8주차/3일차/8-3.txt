@@ -1,0 +1,122 @@
+데이터 분석을 시각화와 같이 진행해보자
+
+그래프 별 사용 타이밍
+산점도 				: 한 주제의 label나 class에 따른 여러 데이터 분포 확인
+막대그래프				: 한 주제의 label 정보 확인
+subplot				: 한 주제의 여러 label 비교
+히스토그램				: 전체 데이터 분포 확인
+파이차트				: 한 주제의 label별 비율 확인
+히트맵				: 2차원 맵에서 해당 지점 (x,y)의 데이터 확인
+컬러맵				: 데이터 위치에 따라 색을 달리 해서 원하는 데이터 색상 확인
+박스플롯				: 평균, 분산을 표현 ( 박스 가운데 홀쭉한게 median, 박스 사선부분 끝 신뢰구간, 맨 아래선 25분위, 맨 윗선 75분위, / 박스 밖 원 outlier )
+					: >> subplot을 활용해서 두 주제의 통계량을 비교 가능하다
+바이올린 플롯			: 박스플롯 + KDE곡선(부드러운 분포 확인) 확률밀도확인
+
++++
+seaborn				: Pandas Dataframe과 연계가 잘됨
+라인플롯				: 흐름에 따른 데이터 변화량 확인
+히스토그램				: 위의 막대그래프랑 같은 역할
+kde플롯				: 라인플롯의 부드러운 곡선 버전
+히트맵				: 변수 2개의 상관관계
+등고선				: 히트맵의 부드러운 곡선 버전
+조인트플롯				: 산점도/히스토그램 or 등고선/kde플롯 같이 보여줌
+페어플롯				: 모든 변수들 간의 상관관계 표현
+
+캣 플롯				: 산점도와 막대그래프를 합친 느낌
+swarm 플롯				: 다른 label마다 데이터가 안겹치게 함
+strip 플롯				: Dataframe의 dtype이 categorical인 경우 사용하면 편함
+박스플롯				: 위와 동일
+박슨플롯				: 좀더 자세한 박스플롯 (분위수 상세)
+바이올린 플롯			: 위와 동일 .. + swarm 플롯이랑 합쳐서 정확한 데이터 양을 알 수 있다
+바 플롯				: 통계값을 보여주는데 > 95% 신뢰구간을 볼 수 있다   
+포인트 플롯			: 바 플롯처럼 통계값을 보여주는데 다른 label마다 차이를 비교할 수 있도록 선으로 이어준다. 
+
+
+
+
+
+matplotlib.pyplot
+plt.plot
+
+plt.xlabel("",fontsize=)			: 축 이름
+plt.xticks(rotation=)			: 숫자(눈금) 각도 조절 .. 너무 길면 겹칠수도 있으니
+plt.legend(["","" ...], fontsize=)		: 선언한 함수그래프 순서대로 범례를 지정
+plt.xlim(,)					: 특정 범위 확인
+plt.plot(,marker=, markersize=)	: '.' 'o' 'v' '+' '*' 다양한 모양의 마커(점) 생성
+plt.plot(,linestyle=)			: ' ' '-' '--' '-.' ':' 다양한 모양의 선 생성
+plt.plot(,color=,alpha=)			: 'b' 'g' 'r' 'c' 'm' 'y' 'k' 'w' 색 선정 / 투명도 
+plt.savefig('filename', dpi=)		: plot에 따르지만 300~500으로 설정한다
+
+<산점도>
+plt.scatter					: 영역(x축 y축)에 있는 점으로 이루어진 그래프
+
+plt.scatter(s=,c=)				: 점크기(영역), 색(리스트형태로 받아 앞데이터 뒤데이터 나눠서 색다르게함)
+
+<막대그래프>
+plt.bar() / plt.barh()			: 세로막대그래프(흔히보는거) / 가로막대그래프(그거 옆으로 눕힌것)
+
+x축 y축 선언(리스트)			: x=feature	y=value값
+plt.bar(x,y,align=)				: x축값 / y축값 / 'center' 중앙 정렬
+plt.bar(,alpha=,color=)			: 투명도 / 'green' 'red' 색 지정
+
+< 막대그래프2 >
+fig, axes = plt.subplots()		: 두 클래스 비교 그래프
+
+< 히스토그램 >
+plt.hist()					: 도수분포표
+
+plt.hist(,bins=)				: 막대 개수 조정 (막대 두께 조절)
+plt.hist(density=True)			: 각 막대가 얼마나 많은지 비율(%)로 y축에 표현
+
+ < 파이차트 >
+patches, texts, autotexts = plt.pie()	: 원형차트
+
+plt.pie(explode=)				: 그래프 튀어나오게 할 수 있음 .3 
+plt.pie(labels=)				: 이름
+plt.pie(autopct=)				: '%.2f%% 소수점 2째 자리까지 표현
+plt.pie(shadow=)				: True 그림자
+plt.pie(startangle=)			: 시작 각도? .. 시계반대방향
+
+for t in texts:				: 파이 밖(label)
+t.set_fontsize()				: 
+t.set_color()					: gray	
+
+for t in autotexts:				: 파이 안(data값)
+
+< 히트맵 >
+plt.matshow()				: 
+
++임시 데이터 생성
+arr = np.random.standard_normal((30,40))
+>> 40개의 랜덤 데이터를 가진 리스트 30개 만들기
++컬러맵 설정
+cmap = plt.get_cmap()			: 'PiYG' 'BuGn' 'Greys' 'bwr' 색 지정
+
+plt.matshow(arr, cmap=cmap)	: 데이터, 컬러맵 설정
+
+< 컬러바 >
+plt.colorbar()				: 데이터 값에 따른 색 입히기
+
+plt.colorbar(shrink=)			: 0.8 색 데이터 막대 크기 조절
+plt.colorbar(aspect=)			: 10 히트맵 가로세로 비율 조정
+
+plt.viridis()
+plt.plasma()
+plt.jet()
+plt.nipy_sepctral()				: 4가지 버전에 따라 범위에 따른 색이 다름 >> 목적에 맞는 컬러 선택
+
+==================
+그냥 주피터 노트북 해보면서 찾아보자
+
+
+
+
+
+
+
+
+
+
+
+
+
