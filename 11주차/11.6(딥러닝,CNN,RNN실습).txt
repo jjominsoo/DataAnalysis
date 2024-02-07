@@ -1,0 +1,10 @@
+ResNet 
+이미지 분류 모델, 현업에서도 잘 사용
+layer별로 종류가존재
+
+1. GPU연결하기
+
+2. 이미지 불러올때 jpg, png의 확장자를 가진것이 좋음 .. webp는 request가 안먹힐수 있음
+
+3. 전처리 (ResNet모델 내에 학습결과물이 있으므로 그 결과를 맞추기 위해서 맞게 전처리해야함 )
+def get_models_and_trains

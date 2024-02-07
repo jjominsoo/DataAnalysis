@@ -1,0 +1,30 @@
+1. 결측치 확인
+exist_na = credit.isna().values.any()
+exist_null = credit.isnull().values.any()
+print(exist_na, exist_null)
+
+2. Min max scaler ( 비율 맞춰서 스케일링 )
+from sklearn.preprocessing import MinMaxScaler
+scaler = MinMaxScaler()
+credit_time = scaler.fit_transform(credit[['Time']])
+credit_time = pd.DataFrame(credit_time)
+credit_time.columns = ['Time']
+credit_time
+
+3. 데이터프레임 합치기
+credit_combined = pd.concat([credit_time,
+                             credit_log_amount,
+                             Vs_data],
+                            axis=1)
+credit_combined
+
+
+
+np.random.seed
+np.random.randn
+np.random.uniform
+np.vstack
+random_state
+
+import torch.nn.functional as F
+F.softmax 	: 점수를 확률로 계산
