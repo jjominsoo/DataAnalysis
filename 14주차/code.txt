@@ -1,0 +1,7 @@
+tolist()
+set( df['col'].tolist() )
+df['col'].copy()
+df['col1'].apply( lambda x : file[x][0] if x in file else None )
+
+import folium
+m = folium.Map( ~~~ )
