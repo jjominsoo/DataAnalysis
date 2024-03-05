@@ -1,0 +1,170 @@
+AB테스트 
+회사가 어느정도 클때 AB테스트 사용
+*런타임 **결과분석 2가지 스텝으로 나뉨
+과정
+가설 > 리뷰+가설검증 > 승인 + Ramp-up
+순서
+1. SaaS	: Optimizely, VWO를 통한 간단한 분석 ( Front-end interaction .. 클릭 = 내부데이터와 연동안됨) 
+2. 직접구현	: 버켓팅 로직, 어떤 이벤트 특정 고려
+주간미팅 
+대시보드( 템플릿, Tableau Looker PowerBI 파이썬노트북 )를 통한 시각화
+
+* 런타임
+사용자가 들어왔을 때 어느 그룹(A/B)에 넣을지 결정 ( 버켓팅 로직, 템플릿 결정 )
+테스트 성격에 따라 userid/deviceid(가격같은 중요 KPI X) 사용
+
+* 결과분석
+가설, 경험이 중요 ( 검색엔진 = click through rate 지표 중요 )
+객관적이고 투명해야함
+큰손, 봇같은 outlier을 잘 처리해야함 ( 평균기준 양끝 퍼센트 고객 ) >> 디버깅에 영향
++대시보드
+color coding ( 전체적인 키 지표의 통계적 의미 )
+
+AA테스트 : 무의미한 결과가 나와야함 > 앞으로 진행할 AB테스트에서 영향을 미칠일이 없다. + 프로그램 버그 체크
+2~3번 거쳐서 AB테스트로 넘어감
+보통 날짜기반 방문트래픽 랜덤 추출
+
+AB테스트 Ramp-up은 목표 트래픽을 정하고 가는 것이 좋고
+어떤 테스트를 하냐에 따라 기간을 다르게 잡는다 ( UI UX같은건 길게 나머진 일주일?)
+
+AB테스트기본
+Variant간 트래픽 크기가 동일한지 ( 차이가 오차범위 내(신뢰구간 95%)에 있는지 )
+
+QA
+AB테스트 제안자의 생각이 잘 반영되도록 
+주기적인 AA테스트
+
+점진적 커버리지
+AB테스트 결과가 전체적으로 안좋더라도 특정 사용자층에는 좋을 수 있으므로
+다양한 세그먼트를 테스트하는 것이 중요 ( 세그먼트 별로 모델을 달리할 수 있다. )
+
+지표의 개선?
+내부적인 변화를 이용했다면 지표가 그대로여도 성공으로 간주한다 ( 자동화를 통한 운영비용 감소, 새로운 정책 )
+가설에 분명히 명시시켜야함
+
+모바일 앱 기반
+시간이 오래걸림 ( 충분한 앱 다운로드, 정기적인 업데이트 )
+
+안좋은 가설
+잘못된 가설, 임팩트 적은 가설, 가격대 테스트, 한번에 여러 기능
+
+AB테스트 기다리는 기간
+일주일 정도 / 최소 샘플(A.B) 크기 ( https://www.evanmiller.org/ab-testing/sample-size.html )
+익숙한 UI/UX = 2~4주
+
+AB테스트 통계
+빈도에 기반한 통계 ( 베이지안 통계 X )
+귀무가설, 정규분포, 중심극한정리, Z-test(표본>30), T-test ..
+*귀무가설 : A,B가 동일한 걸로 봄 ( A,B 클릭율 동일 )
+*중심극한정리 : 데이터 분포를 정규분포로 변환
+*B-A를 통해 평균이 0인 표준정규분포(Z-분포)가 되므로, Z/T-test를 통해 P-value,Z-score를 구하고 신뢰구간 안에 있으면 귀무가설 채택
+*Z-score : B-A의 그래프를 그렸을 때의 X축값 (-3~3) 
+*신뢰구간 : 90=1.645 95=1.96 99=2.575 )
+*P-Value : 오른쪽(3)부터 Z-score까지 면적
+
+중심극한정리
+모집단의 샘플(>30)의 평균은 정규분포를 따른다
+def sample_mean(population, sample_size, n_samples):
+  sample_means = []
+  for i in range(n_samples):
+    sample = np.random.choice(population, size=sample_size, replace=False)
+    sample_mean = stat.mean(sample)
+    sample_means.append(sample_mean)
+  print(stat.mean(sample_means),stat.stdev(sample_means))
+  return sample_means
+sns.displot(sample_mean(x, 10, 1000))
+10개의 요소를 가진 1000개의 샘플만듬
+*skewed 분포 : 한쪽으로 치우쳐진 분포
+*multimodal 분포 : 쌍봉우리 분포
+*uniform 분포 : 다 일정한 분포
+>>> 즉 어떤 분포든 중심극한정리를 통해 정규분포로 바꾸고(A, B) 차이를 내면 마찬가지로 정규분포를 따른다(B-A)
+
+AB테스트 트래픽 비교
+1 .z-test (비율)
+P(B) = 0.5?가 목표 .. 공식을 통해 나온 z-score의 범위가 신뢰구간(95%)내에 있다면 ok
+버켓이 잘나눠졌는가 테스트
+proportion z-test = -1.96<z-score<1.96? ( 테블로=자동)
+[ from statsmodels.stats.proportion import proportions_ztest 						]
+[ n_test = 2056 														]
+[ n_ctrl = 2070 														]
+[ stats, pvalue = proportions_ztest(n_test, n_ctrl+n_test, value=0.5, alternative='two-sided')	]
+2. one-sample-t-test (값)
+두 그룹의 샘플의 평균차이 (편차를 모를때)
+impression,click,purchase,amount같은 지표들로 테스트
+>> 둘다 결과로 z-score가 나오므로 신뢰구간 이후 절차는 똑같음
+[ from scipy import stats ]
+[ stats.ttest_1samp(a, 0.5) ]
+3. two-sample-t-test (값)
+2개의 샘플집단이 같은지 다른지
+
+
+신뢰도 < 테스트 표본 늘리는게 중요
+95%는 큰범위가 아니다( 기능차이, 표본이 충분하다면 AB가 항상 동일하게 나오진 않음)
+테스트 기간동안 AB테스트를 돌리면서 임계치(조건)를 정해야함 ( 매출액이 10%이하로 떨어진다 )
+목표로 하는 지표가 유의미한 결과가 나오기 위해 필요한 트래픽을 가늠하고, 샘플이 모일 때까지 기다린다 = Data Peeking 금지 ( 한번 유의미한 결과가 나왔다고 섣불리 결과를 내면 안된다. )
+이상데이터 처리, 필터링 같은 처리들은 두 집단(A,B)에 동일하게 실행
+
+데이터 분리
+0. 이벤트 데이터 		: 사용자 별  impression 정보(클릭,구매,금액..) 기록 ) << 로그파일 같은 소스를 통해 만들어냄
+0. AB varient 데이터	: 사용자 별 어느 버켓(A,B)에 속했는지 나타냄 (control, test)
+0. 메타 데이터		: 사용자 별 메타정보(성별,나이..) 저장
+
+t-score계산
+A,B의 유의미한 차이를 확인하기 위해서 t-score(=샘플수가 크면 z-score)값과 같음 >> 추후 color coding에서 표시하기 위해
+결과( tscore > 1.96 : 녹색(증가추세) / < 1.96 : 빨간색(감소추세)
+[ tscore, pvalue = scipy.stats.ttest_ind(b,a)	]
+[ print(tscore, pvalue)					]
++직접 계산				< 시각화 툴에선 python을 못쓰므로, 조건(특정 연령, 성별, 날짜범위)에 따라 그때 계산해야함
+t-score = (mean_b - mean_a)/math.sqrt(var_a/n_a + var_b/n_b)	: b=test a=control
+
+시각화 대시보드
+전체 기간에 걸쳐서 목표 키 지표 비교 가능해야한다
+일 별로 키 지표 비교 가능해야한다 + 컬러코딩		== 시간의 흐름에 따른 지표값 차이 표시
+트래픽 메타데이터 바탕으로 한 필터링			== 성별,나이,신규 >> 부분적 론치
+*유의점
+필터에 따라 데이터 별도 수집 ( 대시보드는 파이썬을 못씀 > sql문으로 지표들 가져와서 따로 계산 )
+1.모든 필터 조합 미리 계산(Tableau) 2.동적으로 sql실행해서 계산(Looker)
+
+OLAP Cube
+모든 조합을 미리 계산 후 저장 > 응답속도 개선
+'4 - OLAP CUBE 예제-사진캡쳐'
+session(사용자)기반으로 ( variant(AB),date,age,gender에 따른 session수(샘플수),impression,click,puschased,revenue,two-sample-test(매출합, 매출제곱합) )
+
+시각화툴
+엑셀, 구글스프레드시트 < 가장 많이 쓰임 (자동화)
+"Looker Tableau" PowerBI ApacheSuperset ModeAnalytics ReDash GoogleStudio AWSQuicksight Python(EDA)
+Looker	<>	Tableau
+비쌈		싸고 투명함
+편집 용이		
++셀프서비스 대시보드를 만들자 ( 60~70% 질문에 대해 만들면 성공 .. Looker가 좋지만 비쌈)
+
+KPI		<>허영심지표(숫자만커지는의미없는지표)
+달성하고자 하는 중요 목표 (정량적 숫자 .. 매출액, 유료회원수) .. 데이터 문해력의 시작점
+적을수록 좋음 (지표간의 충돌) .. 대시보드도 적을수록 좋음(데이터 인프라 비용 감소)
+
+좋은 지표 특성
+3A : Accessbile(쉽게 접근 .. 시각화툴) Actionable(지표의미 분명) Auditable(검증 가능)
+
+Tableau
+'Create Calculated Field...'	: 다른 필드들을 활용해(수식,함수) 새 필드 만드 .. Z-score계산
+'Create Parameter...'	: 동적값 변수
+Measures		(X축)	: 숫자, 값(정량적)
+Dimensions	(Y축)	: 메타데이터(정성적) .. 필터역할 (날짜,성별,지역 ..)
+
+Tableau 실습
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
