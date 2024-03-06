@@ -153,6 +153,45 @@ Dimensions	(Y축)	: 메타데이터(정성적) .. 필터역할 (날짜,성별,�
 
 Tableau 실습
 
+Database Normalization
+데이터 품질이 점점 중요해짐에 따라 데이터베이스를 조직적,일관적으로 디자인함
+유지보수(레코드 편집) 용이, 데이터 정합성 보존	.. 데이터 웨어하우스는 별도다.
++1NF(Normal Form)
+Primary Key, 중복제거, 한셀에 한개의 값(atomicity)
++2NF
+1NF 만족, PK로 다른 테이블에 접근 가능(star schema)
++3NF
+2NF 만족, 테이블 상세 분리
+
+SCD [ Slowly Changing Dimensions ]
+DW, DL(OLAP)에서는 Production Table(OLTP)의 모든 히스토리를 저장(과거데이터 확인, 롤백) .. timestamp(create_at, updated_at)
++type0
+정해지면 고정 			(시작일)
++type1
+없다가 새로 생기면 덮어씀 		(연간소득)
++type2
+기존 레코드의 업데이트 + 변경시간	(등급변화) .. 새로운 레코드(아랫줄에)로 추가
++type3
+type2와 같지만 칼럼을 추가		(등급변화) .. 새로운 칼럼(옆줄에) 추가
++type4
+type2와 같지만 테이블을 생성	
+
+DBT
+데이터 관리 툴 (데이터 티어별 관리, 리니지(시각화), 데이터품질 검증, 스냅샷 ... )
+Airflow로 스케줄링하고 redshift,spark,snowflake,bigquery같은 빅데이터 프레임워크와 협업함
++Fact Table
+분석의 초점, FK를 통해 Dimension Table과 연결, 사이즈가 큼
++Dimension Table
+Fact Table의 상세정보(메타데이터) 제공, PK = Fact Table FK, 정보가 업데이트
+
+
+===================================================================================================================
+총정리
+
+AB테스트
+데이터기반 결정의 핵심적 부분
+가설 설정이 중요 + 결과 리뷰,공유를 통해 인사이트를 얻자
+dbt툴을 이용한 소스데이터의 조인(ELT)
 
 
 

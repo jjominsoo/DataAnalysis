@@ -1,0 +1,67 @@
+Foundation Model
+대규모 사전학습(pre-trained)된 모델 ..  이미지,텍스트
+인공지능 발전에 커다란 기여를 함
+Fine-Tuning을 통해, 특정 목적을 위해 변환시킬 수 있다.
+종류
+1.NLP 모델
+자연어 처리, Transformer기반 .. GPT BERT 
+2.비전 모델
+이미지 처리, CNN기반~Transformer기반 .. ResNet / ViT
+3.멀티모달 모델
+처리할 데이터 타입이 여러개 .. GPT4
+4.오디오/스피치 모델
+.. WaveNet
+...
+
+HuggingFace
+오픈소스 관련된 AI개발 서비스를 제공함 >> 라이센스 확인 중요
+Foundation Model을 모아놓음 in HuggingFace Hub > 원하는 모델 검색 가능
+1.모델 직접다운 2.API를 통해 실행
+기능
+1.Space
+Git Repository 역할
+2.transformers
+모델 사용하기 쉽게 도와주는 라이브러리 using TensorFlow PyTorch
+텍스트 분류, 정보 추출,질문 답변, 번역, 요약, 이미지 처리(<transformer기반) 등이 가능
+3.datasets
+자연어 처리에 대한 '평가'관련 데이터 or 처리하고 싶은 데이터
+4.AutoTrain
+ML모델 빌딩 자동화
+5.Diffuser
+Diffusion모델 (노이즈 부터 데이터 복원) 훈련 + finetuning + 배포
+6.Accerlerate
+하드웨어 (CPU GPU TPU)에 맞게 코드도 최적화해주고, 하드웨어에서 활용까지 해준다
+7.Optimum
+Foundation Model을 특정 하드웨어(Intel, NVIDIA) 위에서 finetuning해주는데 최적화
++LLM
+뒤 단어 예측(Text Generation), 질의응답(뒤 문장 예측) (Text to Text Generation)
+Text to Text Generation : Q&A 요약 번역 .. [ 딥러닝 - sequence to sequence model ]
+TG --finetuning-> TTG
+
+Few-shot Learning == Transfer Learning
+Foundation model들에서 최소한의 예제를 사용하며 프롬프트 설정 > 모델 생성
+Transfer Learning			<>	Fine tuning 
+모델 전체를 활용함		*상위개념		모델에서 데이터셋으로 분리하여 사용
+모델을 새로운 목적으로 사용			그 목적 중 구체적으로 들어감
+모델 내용을 다 갖고 감 (극히 일부만 바꿈)	새로운 데이터셋과 합침			
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+				
