@@ -1,0 +1,60 @@
+모델
+ResNet18
+efficientnet-b0
+ViT
+ConvNext
+CNN
+
+
+LightGBM
+AutoML(pycaret)
+grid search
+
+
+data augmentation
+
+XGboost, Casual ML
+
+
+
+시드 고정
+def seed_everything(seed):
+    random.seed(seed)
+    os.environ['PYTHONHASHSEED'] = str(seed)
+    np.random.seed(seed)
+
+seed_everything(42) # Seed 고정
+
+
+# Initiate classifier to use
+mdl = lgb.LGBMClassifier(boosting_type= 'gbdt', 
+          objective = 'multiclass', 
+          n_jobs = -1, 
+          max_depth = -1,
+          device= 'gpu',
+          min_split_gain = 0.5,
+          random_state = 42 )
+
+
+
+
+
+
+
+================================================================
+반려견에 대한 수요가 늘어남
+( 
+
+반려견 사진 (이미지 분류)
+> 개 특성 ( 털 있고, 덩치 크고, 산책 많이 필요하고, 자주 아프고 )
+
+해당 개를 기르기 위해 좋은 지역
+1. 
+
+
+
+
+
+
+
+
